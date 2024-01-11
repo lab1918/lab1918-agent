@@ -27,8 +27,25 @@ Alway format the code before push
 $ black .
 ```
 
+## Build
+
+```
+docker build -t agent .
+```
+
 ## Test
 
 ```
 tox
+```
+
+## Run
+```
+docker run -d -t -i            \
+  -e BROKER=<>                 \
+  -e BACKEND=<>                \
+  -e AWS_REGION=<>             \
+  -e AWS_ACCESS_KEY_ID=<>      \
+  -e AWS_SECRET_ACCESS_KEY=<>  \
+  agent
 ```
