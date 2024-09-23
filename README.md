@@ -47,7 +47,7 @@ docker run -d -t -i            \
   -e AWS_REGION=<>             \
   -e AWS_ACCESS_KEY_ID=<>      \
   -e AWS_SECRET_ACCESS_KEY=<>  \
-  -e STS_ROLE_ARN=<>           \
+  -e AWS_ACCOUNT=<>            \
   agent
 ```
 

@@ -19,8 +19,12 @@ def get_celery_app():
             "MessageRetentionPeriod": "600",
         },
     }
-    if sts_role_arn := getenv("STS_ROLE_ARN"):
-        broker_transport_options["sts_role_arn"] = sts_role_arn
+    if account := getenv("AWS_ACCOUNT"):
+        broker_transport_options["predefined_queues"] = {
+            transport: {
+                "url": f"https://sqs.{region}.amazonaws.com/{account}/{transport}"
+            }
+        }
 
     app = Celery(
         main=deployer,
