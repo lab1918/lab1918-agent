@@ -1,4 +1,5 @@
-from lab1918_agent.utils import logger, get_celery_app
+from lab1918_agent.utils import get_celery_app
+from lab1918_agent.logger import logger
 
 
 app = get_celery_app()

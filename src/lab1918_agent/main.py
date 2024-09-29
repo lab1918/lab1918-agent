@@ -1,9 +1,8 @@
-import logging
 import os
 
 from pathlib import Path
 from lab1918_agent.assume_role import assume_role
-from lab1918_agent.utils import logger, get_celery_app
+from lab1918_agent.logger import logger
 
 
 def switch_role():
@@ -23,7 +22,3 @@ def switch_role():
 
 if __name__ == "__main__":
     switch_role()
-    app = get_celery_app()
-    worker = app.Worker(include=["lab1918_agent.deployer"])
-    worker.setup_defaults(concurrency=4, loglevel=logging.INFO)
-    worker.start()
