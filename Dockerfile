@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY src/ /home/lab1918
 
-CMD PYTHONPATH=. python3 lab1918_agent/deployer.py
+CMD PYTHONPATH=. python3 lab1918_agent/main.py
