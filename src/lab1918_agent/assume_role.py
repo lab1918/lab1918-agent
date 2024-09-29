@@ -12,9 +12,9 @@ def assume_role() -> dict:
     )
     credentials = assumed_role_object["Credentials"]
     return {
-        "AWS_ACCESS_KEY_ID": credentials["AccessKeyId"],
-        "AWS_SECRET_ACCESS_KEY": credentials["SecretAccessKey"],
-        "AWS_SESSION_TOKEN": credentials["SessionToken"],
+        "aws_access_key_id": credentials["AccessKeyId"],
+        "aws_secret_access_key": credentials["SecretAccessKey"],
+        "aws_session_token": credentials["SessionToken"],
     }
 
 
