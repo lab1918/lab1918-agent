@@ -1,6 +1,7 @@
 import docker
-import docker.constants
+import tempfile
 
+from urllib import request
 from typing import Optional
 
 from lab1918_agent.logger import logger
@@ -30,16 +31,18 @@ class ContainerClient:
 
     def delete_network(self, name) -> bool:
         logger.info(f"deleting network {name}")
-        if not self.is_network_exist(name):
+        if self.is_network_exist(name) is None:
             logger.info(f"network {name} does not exist")
-            return
+            return True
         networks = self.client.networks.prune()["NetworksDeleted"]
         logger.info(f"deleted network {networks}")
         return name in networks
 
-    def pull_image(self, name):
-        logger.info(f"pull image {name}")
-        self.client.images.pull(name)
+    def is_container_exist(self, name) -> Optional[Container]:
+        containers = self.client.containers.list()
+        for container in containers:
+            if container.name == name:
+                return container
 
     def create_container(self, image_name, container_name, mgmt_network) -> Container:
         logger.info(f"create container {container_name} from {image_name}")
@@ -51,3 +54,24 @@ class ContainerClient:
             privileged=True,
             tty=True,
         )
+
+    def delete_container(self, name) -> bool:
+        logger.info(f"deleting container {name}")
+        if self.is_container_exist(name) is None:
+            logger.info(f"container {name} does not exist")
+            return True
+        containers = self.client.containers.prune()["ContainersDeleted"]
+        containers = containers if containers is not None else []
+        logger.info(f"deleted container {containers}")
+        return name in containers
+
+    def pull_image(self, name):
+        logger.info(f"pull image {name}")
+        self.client.images.pull(name)
+
+    def load_image(self, url):
+        with tempfile.TemporaryFile() as f:
+            logger.info(f"download file from {url}")
+            request.urlretrieve(url, f.name)
+            logger.info(f"load {f.name} as docker image")
+            self.client.load(f.read())
