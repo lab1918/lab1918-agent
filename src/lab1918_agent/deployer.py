@@ -29,3 +29,14 @@ def create_container(self, container_name, image_name, networks) -> bool:
     container.start()
     logger.info(f"created container {container_name}")
     return True
+
+
+@app.task(bind=True)
+def create_network(self, network_name, network_driver) -> bool:
+    logger.info(
+        f"Running task create_network, id: {self.request.id}, network_name: {network_name}, network_driver: {network_driver}"
+    )
+    client = ContainerClient()
+    client.create_network(network_name, network_driver)
+    logger.info(f"created network {network_name}")
+    return True
