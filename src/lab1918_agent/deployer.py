@@ -20,7 +20,6 @@ def create_container(self, container_name, image_name, networks) -> bool:
         f"Running task create_container, id: {self.request.id}, container_name: {container_name}, image_name: {image_name}, networks: {networks}"
     )
     client = ContainerClient()
-    client.pull_image(image_name)
     client.create_network(networks[0])
     container = client.create_container(image_name, container_name, networks[0])
     for each in networks[1:]:
@@ -61,4 +60,24 @@ def delete_network(self, network_name) -> bool:
     client = ContainerClient()
     client.delete_network(network_name)
     logger.info(f"deleted network {network_name}")
+    return True
+
+
+@app.task(bind=True)
+def load_image(self, url) -> bool:
+    logger.info(f"Running task load_image, id: {self.request.id}, url: {url}")
+    client = ContainerClient()
+    client.load_image(url)
+    logger.info(f"image {url} loaded")
+    return True
+
+
+@app.task(bind=True)
+def pull_image(self, image_name) -> bool:
+    logger.info(
+        f"Running task pull_image, id: {self.request.id}, image_name: {image_name}"
+    )
+    client = ContainerClient()
+    client.pull_image(image_name)
+    logger.info(f"image {image_name} loaded")
     return True
