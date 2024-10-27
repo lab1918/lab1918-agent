@@ -70,7 +70,7 @@ class ContainerClient:
         self.client.images.pull(name)
 
     def load_image(self, url):
-        with tempfile.TemporaryFile() as f:
+        with tempfile.NamedTemporaryFile() as f:
             logger.info(f"download file from {url}")
             request.urlretrieve(url, f.name)
             logger.info(f"load {f.name} as docker image")
