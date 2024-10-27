@@ -74,4 +74,4 @@ class ContainerClient:
             logger.info(f"download file from {url}")
             request.urlretrieve(url, f.name)
             logger.info(f"load {f.name} as docker image")
-            self.client.load(f.read())
+            self.client.images.load(f.read())
