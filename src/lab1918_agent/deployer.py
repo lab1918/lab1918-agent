@@ -1,6 +1,7 @@
 from lab1918_agent.utils import get_celery_app
 from lab1918_agent.logger import logger
 from lab1918_agent.docker_client import ContainerClient
+from lab1918_agent.file_getter import Getter
 
 
 app = get_celery_app()
@@ -81,3 +82,13 @@ def pull_image(self, image_name) -> bool:
     client.pull_image(image_name)
     logger.info(f"image {image_name} loaded")
     return True
+
+
+@app.task(bind=True)
+def get_file(self, file_url, file_name, overwrite=False):
+    logger.info(
+        f"start processing {file_name} with overwrite {overwrite}, id: {self.request.id}"
+    )
+    getter = Getter(file_url, file_name, overwrite=overwrite)
+    cached_file = getter.get()
+    return cached_file
