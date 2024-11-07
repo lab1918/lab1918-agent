@@ -14,8 +14,8 @@ class SSHClient:
     def __init__(
         self,
         host,
-        username="ubuntu",
-        key="/tmp/ec2.pem",
+        username,
+        key,
         ssh_port=22,
     ):
         self.host = host
@@ -32,16 +32,11 @@ class SSHClient:
     def __str__(self):
         return f"{self.username}@{self.host}:{self.ssh_port}"
 
-    @cache
-    def _get_agent_key(self):
-        with open(self.key) as file:
-            return file.read()
-
     def _open_ssh_session(self):
         self.__ssh_client = paramiko.SSHClient()
         self.__ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         self.logger.info(f"connecting to: {self.username}@{self.host}:{self.ssh_port}")
-        pkey = paramiko.RSAKey.from_private_key(io.StringIO(self._get_agent_key()))
+        pkey = paramiko.RSAKey.from_private_key(io.StringIO(self.key))
         self.__ssh_client.connect(
             self.host,
             username=self.username,

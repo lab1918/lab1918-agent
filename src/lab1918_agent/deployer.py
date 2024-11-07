@@ -2,6 +2,7 @@ from lab1918_agent.utils import get_celery_app
 from lab1918_agent.logger import logger
 from lab1918_agent.docker_client import ContainerClient
 from lab1918_agent.file_getter import Getter
+from lab1918_agent.ssh_client import SSHClient
 
 
 app = get_celery_app()
@@ -92,3 +93,23 @@ def get_file(self, file_url, file_name, overwrite=False):
     getter = Getter(file_url, file_name, overwrite=overwrite)
     cached_file = getter.get()
     return cached_file
+
+
+@app.task(bind=True)
+def exec_cmd(
+    self,
+    host: str,
+    username: str,
+    key: str,
+    ssh_port: int,
+    cmd: str,
+    expected_exit_statuses=None,
+) -> dict:
+    logger.info(f"start executing: {cmd}, id: {self.request.id}")
+    ssh_client = SSHClient(host, username, key, ssh_port)
+    ssh_client.run(cmd, expected_exit_statuses=expected_exit_statuses)
+    return {
+        "stdout": ssh_client.stdout,
+        "stderr": ssh_client.stderr,
+        "exit_status": ssh_client.exit_status,
+    }
